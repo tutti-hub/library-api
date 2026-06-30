@@ -38,3 +38,5 @@ out/
 
 library.db
 .env
+code.txt
+copy_code.sh

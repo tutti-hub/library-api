@@ -1,6 +1,5 @@
 package com.jjtutti.library;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.event.ApplicationStartedEvent;
@@ -13,12 +12,8 @@ public class LibraryApiApplication {
 		SpringApplication.run(LibraryApiApplication.class, args);
 	}
 
-	@Value("${spring.datasource.url}") String url;
-
 	@EventListener(ApplicationStartedEvent.class)
 	void onReady() {
-		System.out.println("Hello World");
-		System.out.println(url);
+		System.out.println("Application ready...");
 	}
-
 }

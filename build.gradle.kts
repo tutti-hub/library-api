@@ -1,6 +1,6 @@
 plugins {
 	java
-	id("org.springframework.boot") version "4.1.0"
+	id("org.springframework.boot") version "4.0.7"
 	id("io.spring.dependency-management") version "1.1.7"
 }
 
@@ -27,7 +27,14 @@ dependencies {
 	
 	implementation("org.hibernate.orm:hibernate-community-dialects")
 
+	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2")
+
 	annotationProcessor("org.projectlombok:lombok")
+	
+	runtimeOnly("com.h2database:h2")
+	
+	testImplementation("org.assertj:assertj-core:3.27.7")
+	testImplementation("org.mockito:mockito-core:5.+")
 	testImplementation("org.springframework.boot:spring-boot-starter-data-jpa-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-security-test")
 	testImplementation("org.springframework.boot:spring-boot-starter-validation-test")

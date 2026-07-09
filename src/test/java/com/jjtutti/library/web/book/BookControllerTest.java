@@ -13,6 +13,7 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
@@ -23,7 +24,7 @@ import static com.jjtutti.library.helpers.BookTestHelper.*;
 import static org.assertj.core.api.Assertions.*;
 
 @WebMvcTest(BookController.class)
-@WithMockUser(username = "user", password = "pass")
+@WithMockUser
 @Import(SecurityConfig.class)
 public class BookControllerTest {
 
@@ -148,5 +149,12 @@ public class BookControllerTest {
         assertThat(response).hasStatus(HttpStatus.NO_CONTENT);
         verify(bookService).deleteBookById(id);
         verifyNoMoreInteractions(bookService);
+    }
+
+    @WithAnonymousUser
+    @Test
+    public void shouldReturn401WhenNotAuthenticated() {
+        var response = mvc.get().uri("/api/books");
+        assertThat(response).hasStatus(HttpStatus.UNAUTHORIZED);
     }
 }

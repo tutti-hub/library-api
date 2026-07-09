@@ -28,16 +28,16 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public UserDetailsService userDetailsService() {
+    // @Bean
+    // public UserDetailsService userDetailsService() {
 
-        UserDetails user = User.withUsername("user")
-                .password(passwordEncoder().encode("pass"))
-                .roles("USER")
-                .build();
+    //     UserDetails user = User.withUsername("user")
+    //             .password(passwordEncoder().encode("pass"))
+    //             .roles("USER")
+    //             .build();
 
-        return new InMemoryUserDetailsManager(user);
-    }
+    //     return new InMemoryUserDetailsManager(user);
+    // }
 
     @Bean
     public PasswordEncoder passwordEncoder() {

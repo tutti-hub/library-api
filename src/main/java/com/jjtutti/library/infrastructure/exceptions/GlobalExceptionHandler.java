@@ -20,4 +20,7 @@ public class GlobalExceptionHandler {
     public ErrorResponse handleIllegalArgument(IllegalArgumentException e, HttpServletRequest req) {
         return new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value(), req.getRequestURI());
     }
+
+    
+
 }

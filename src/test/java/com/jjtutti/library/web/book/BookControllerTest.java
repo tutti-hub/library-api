@@ -1,6 +1,7 @@
 package com.jjtutti.library.web.book;
 
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -24,7 +25,6 @@ import static com.jjtutti.library.helpers.BookTestHelper.*;
 import static org.assertj.core.api.Assertions.*;
 
 @WebMvcTest(BookController.class)
-@WithMockUser
 @Import(SecurityConfig.class)
 public class BookControllerTest {
 
@@ -36,6 +36,7 @@ public class BookControllerTest {
 
     ObjectMapper objectMapper = new ObjectMapper();
 
+    @WithMockUser(authorities = "ROLE_USER")
     @Test
     public void shouldReturnAllBooks() {
         int count = 3;
@@ -54,6 +55,7 @@ public class BookControllerTest {
 
     }
 
+    @WithMockUser(authorities = "ROLE_USER")
     @Test
     public void shouldReturnBookWhenExists() {
         long id = 1L;
@@ -71,6 +73,7 @@ public class BookControllerTest {
         body.extractingPath("$.isbn").isEqualTo(isbn(id));
     }
 
+    @WithMockUser(authorities = "ROLE_USER")
     @Test
     public void shouldReturnBookNotFoundWhenDoesNotExist() {
         long id = 84L;
@@ -91,6 +94,7 @@ public class BookControllerTest {
         body.extractingPath("$.errors.length()").isEqualTo(0);
     }
 
+    @WithMockUser(authorities = "ROLE_LIBRARIAN")
     @Test
     public void shouldAddNewBook() throws JsonProcessingException {
 
@@ -116,6 +120,7 @@ public class BookControllerTest {
         body.extractingPath("$.id").convertTo(Long.class).isEqualTo(id);
     }
 
+    @WithMockUser(authorities = "ROLE_LIBRARIAN")
     @Test
     public void shouldUpdateBook() throws JsonProcessingException {
         long id = 1;
@@ -133,14 +138,14 @@ public class BookControllerTest {
         verify(bookService).updateBook(id, updateBookCommand);
 
         var body = assertThat(response).bodyJson();
-        
+
         body.extractingPath("$.title").isEqualTo(updateBookCommand.title());
         body.extractingPath("$.author").isEqualTo(updateBookCommand.author());
         body.extractingPath("$.isbn").isEqualTo(updateBookCommand.isbn());
-    
-        
+
     }
 
+    @WithMockUser(authorities = "ROLE_ADMIN")
     @Test
     public void shouldDeleteBook() {
         long id = 1;
@@ -156,5 +161,26 @@ public class BookControllerTest {
     public void shouldReturn401WhenNotAuthenticated() {
         var response = mvc.get().uri("/api/books");
         assertThat(response).hasStatus(HttpStatus.UNAUTHORIZED);
+    }
+
+    @WithMockUser(authorities = "ROLE_USER")
+    @Test
+    void shouldReturn403WhenUserCreatesBook() {
+        var jsonPayload = "{}"; 
+        var response = mvc.post().uri("/api/books")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(jsonPayload)
+        .accept(MediaType.APPLICATION_JSON);
+        
+        assertThat(response).hasStatus(HttpStatus.FORBIDDEN);
+        verifyNoInteractions(bookService);
+    }
+
+    @WithMockUser(authorities = "ROLE_LIBRARIAN")
+    @Test
+    void shouldReturn403WhenLibrarianDeletesBook() {
+        var response = mvc.delete().uri("/api/books/{id}", 1);
+        assertThat(response).hasStatus(HttpStatus.FORBIDDEN);
+        verifyNoInteractions(bookService);
     }
 }

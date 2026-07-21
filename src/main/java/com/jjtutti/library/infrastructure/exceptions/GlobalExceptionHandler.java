@@ -4,6 +4,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.HttpServletRequest;
 
 @RestControllerAdvice
@@ -21,6 +24,10 @@ public class GlobalExceptionHandler {
         return new ErrorResponse(e.getMessage(), HttpStatus.BAD_REQUEST.value(), req.getRequestURI());
     }
 
-    
+    @ExceptionHandler(JwtException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleJwtException(JwtException e, HttpServletRequest req){
+        return new ErrorResponse(e.getMessage(), HttpStatus.UNAUTHORIZED.value(), req.getRequestURI());
+    }
 
 }

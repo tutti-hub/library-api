@@ -1,11 +1,12 @@
 package com.jjtutti.library.auth;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
+import com.jjtutti.library.dao.entity.user.Role;
+import static com.jjtutti.library.dao.entity.user.RoleName.*;
+import com.jjtutti.library.dao.entity.user.User;
 import static org.assertj.core.api.Assertions.*;
 import java.time.Duration;
-
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 
@@ -14,12 +15,36 @@ public class JwtServiceTest {
     private final JwtService jwtService = new JwtService(
             new JwtProperties(
                     "12345678901234567890123456789012",
-                    Duration.ofMinutes(1)));
+                    Duration.ofMinutes(1), Duration.ofHours(1)));
 
     @Test
-    public void shouldGenerateToken() {
+    public void shouldGenerateTokenByUserDetails() {
         UserDetails userDetails = userDetails("username");
         jwtService.generateToken(userDetails);
+    }
+
+    @Test
+    public void shouldGenerateValidTokenForUser() {
+        String username = "admin";
+        User user = new User(username, "password");
+        user.addRole(new Role(ROLE_ADMIN));
+        String token = jwtService.generateToken(user);
+
+        jwtService.validateToken(token);
+      
+        assertThat(jwtService.extractUsername(token)).isEqualTo(username);
+    }
+
+    @Test
+    public void shouldGenerateRefreshToken() {
+        String username = "admin";
+        var result = jwtService.generateRefreshToken(username);
+        String token = result.token();
+        jwtService.validateToken(token);
+        assertThat(jwtService.extractUsername(token)).isEqualTo(username);
+        assertThat(result.createdAt()).isNotNull();
+        assertThat(result.expiresAt()).isNotNull();
+        assertThat(result.expiresAt()).isAfter(result.createdAt());
     }
 
     @Test
@@ -65,7 +90,7 @@ public class JwtServiceTest {
         JwtService jwtService = new JwtService(
                 new JwtProperties(
                         "12345678901234567890123456789012",
-                        Duration.ofMillis(10)));
+                        Duration.ofMillis(10), Duration.ofHours(1)));
 
         UserDetails userDetails = userDetails("username");
         String token = jwtService.generateToken(userDetails);
@@ -77,7 +102,7 @@ public class JwtServiceTest {
     }
 
     private static UserDetails userDetails(String username, String... roles) {
-        return User.builder()
+        return org.springframework.security.core.userdetails.User.builder()
                 .username(username)
                 .authorities(roles)
                 .build();

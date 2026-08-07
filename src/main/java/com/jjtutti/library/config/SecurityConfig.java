@@ -14,7 +14,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.jjtutti.library.auth.JwtAuthenticationFilter;
 
-import static org.springframework.security.config.Customizer.withDefaults;
+import jakarta.servlet.http.HttpServletResponse;
+
 import static com.jjtutti.library.dao.entity.user.RoleName.*;
 
 @Configuration
@@ -46,6 +47,10 @@ public class SecurityConfig {
                 
                 .csrf(csrf -> csrf.disable())
                 
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint((request, response, e) ->
+                                response.sendError(HttpServletResponse.SC_UNAUTHORIZED)))
+
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/auth/login", "/api/auth/refresh")
                         .permitAll()

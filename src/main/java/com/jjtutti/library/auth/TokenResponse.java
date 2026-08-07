@@ -1,5 +1,5 @@
 package com.jjtutti.library.auth;
 
-public record TokenResponse(String token) {
+public record TokenResponse(String accessToken, String refreshToken) {
 
 }

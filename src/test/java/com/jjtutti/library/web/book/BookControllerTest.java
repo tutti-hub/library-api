@@ -14,18 +14,20 @@ import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import com.jjtutti.library.application.book.BookService;
 import com.jjtutti.library.application.book.UpdateBookCommand;
+import com.jjtutti.library.auth.JwtService;
 import com.jjtutti.library.infrastructure.exceptions.BookNotFoundException;
 import static com.jjtutti.library.helpers.BookTestHelper.*;
 import static org.assertj.core.api.Assertions.*;
 
 @WebMvcTest(BookController.class)
-@Import(SecurityConfig.class)
+@Import({SecurityConfig.class})
 public class BookControllerTest {
 
     @Autowired
@@ -33,6 +35,13 @@ public class BookControllerTest {
 
     @MockitoBean
     BookService bookService;
+
+    
+    @MockitoBean
+    JwtService jwtService;
+
+    @MockitoBean
+    UserDetailsService userDetailsService;
 
     ObjectMapper objectMapper = new ObjectMapper();
 

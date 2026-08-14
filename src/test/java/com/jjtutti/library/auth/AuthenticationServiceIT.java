@@ -137,4 +137,25 @@ public class AuthenticationServiceIT {
         assertThatThrownBy(() -> authenticationService.refreshToken(tokenResponse.refreshToken()))
                 .isInstanceOf(RefreshTokenNotActiveException.class);
     }
+
+    @Test
+    public void shouldSuccessfullyLogout() {
+        TokenResponse tokenResponse = authenticationService.login(new LoginRequest(username, password));
+        authenticationService.logout(tokenResponse.refreshToken());
+
+        assertThat(refreshTokenRepository.count()).isEqualTo(1);
+        RefreshToken refreshToken = refreshTokenRepository.findAll().getFirst();
+        assertThat(refreshToken.isRevoked()).isTrue();
+        assertThat(refreshToken.isActive()).isFalse();
+    }
+
+    @Test
+    public void shouldRejectAlreadyRevokedToken() {
+        TokenResponse tokenResponse = authenticationService.login(new LoginRequest(username, password));
+        authenticationService.logout(tokenResponse.refreshToken());
+        
+        assertThatThrownBy(() -> authenticationService.logout(tokenResponse.refreshToken()))
+                .isInstanceOf(RefreshTokenNotActiveException.class)
+                .hasMessageContaining("not active");
+    }
 }

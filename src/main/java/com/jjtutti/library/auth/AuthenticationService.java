@@ -41,7 +41,29 @@ public class AuthenticationService {
 
     @Transactional
     public TokenResponse refreshToken(String token) {
+        
+        RefreshToken refreshToken = validateAndRevoke(token);
 
+        var currentUser = refreshToken.getUser();
+
+        // Создать новый refresh
+        RefreshTokenPair refreshTokenPair = 
+            refreshTokenService.create(currentUser);
+        
+        // Создать новый access
+        String accessToken = jwtService.generateToken(currentUser);
+        
+        // Вернуть новую пару клиенту     
+        return new TokenResponse(accessToken, refreshTokenPair.token());
+        
+    }
+
+    @Transactional
+    public void logout(String token) {
+        validateAndRevoke(token);
+    }
+
+    private RefreshToken validateAndRevoke(String token) {
         // Проверить подпись и срок действия JWT
         jwtService.validateToken(token);
 
@@ -57,18 +79,7 @@ public class AuthenticationService {
 
         // Отозвать старый refresh
         refreshTokenService.revoke(refreshToken);
-        
-        var currentUser = refreshToken.getUser();
 
-        // Создать новый refresh
-        RefreshTokenPair refreshTokenPair = 
-            refreshTokenService.create(currentUser);
-        
-        // Создать новый access
-        String accessToken = jwtService.generateToken(currentUser);
-        
-        // Вернуть новую пару клиенту     
-        return new TokenResponse(accessToken, refreshTokenPair.token());
-        
+        return refreshToken;
     }
 }

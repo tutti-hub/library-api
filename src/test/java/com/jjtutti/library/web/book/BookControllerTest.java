@@ -35,7 +35,6 @@ public class BookControllerTest {
 
     @MockitoBean
     BookService bookService;
-
     
     @MockitoBean
     JwtService jwtService;

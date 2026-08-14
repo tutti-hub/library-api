@@ -6,19 +6,14 @@ import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
-
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {
 
     private final AuthenticationService authenticationService;
-    // private final RefreshTokenService refreshTokenService;
-
-    public AuthController(AuthenticationService authenticationService
-        // , RefreshTokenService refreshTokenService
-    ) {
+    
+    public AuthController(AuthenticationService authenticationService) {
         this.authenticationService = authenticationService;
-        // this.refreshTokenService = refreshTokenService;
     }
 
     @PostMapping("/login")
@@ -28,8 +23,12 @@ public class AuthController {
 
     @PostMapping("/refresh")
     public TokenResponse refresh(@Valid @RequestBody RefreshTokenRequest request) {
-        throw new IllegalStateException("Not implemented"); 
+        return authenticationService.refreshToken(request.refreshToken());
     }
-    
+
+    @PostMapping("/logout")
+    public void logout(@Valid @RequestBody LogoutRequest logoutRequest) {
+        authenticationService.logout(logoutRequest.refreshToken());
+    }
 
 }

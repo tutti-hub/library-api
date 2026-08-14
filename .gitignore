@@ -40,5 +40,5 @@ library.db
 .env
 code.txt
 copy_code.sh
-test_security.sh
+test_with_curl.sh
 docs

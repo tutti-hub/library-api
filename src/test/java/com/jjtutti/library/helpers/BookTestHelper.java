@@ -3,8 +3,8 @@ package com.jjtutti.library.helpers;
 import java.util.List;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
-import com.jjtutti.library.application.book.BookReadDto;
-import com.jjtutti.library.dao.entity.book.Book;
+import com.jjtutti.library.book.application.dto.BookReadDto;
+import com.jjtutti.library.book.dao.Book;
 
 public class BookTestHelper {
 

@@ -2,9 +2,13 @@ package com.jjtutti.library.auth;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.userdetails.UserDetails;
-import com.jjtutti.library.dao.entity.user.Role;
-import static com.jjtutti.library.dao.entity.user.RoleName.*;
-import com.jjtutti.library.dao.entity.user.User;
+
+import com.jjtutti.library.auth.application.JwtService;
+import com.jjtutti.library.auth.infrastructure.JwtProperties;
+import com.jjtutti.library.security.dao.Role;
+import com.jjtutti.library.security.dao.User;
+
+import static com.jjtutti.library.security.dao.RoleName.*;
 import static org.assertj.core.api.Assertions.*;
 import java.time.Duration;
 import io.jsonwebtoken.ExpiredJwtException;

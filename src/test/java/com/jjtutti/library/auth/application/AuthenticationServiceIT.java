@@ -2,6 +2,7 @@ package com.jjtutti.library.auth.application;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -22,8 +23,11 @@ import static org.assertj.core.api.Assertions.*;
 @SpringBootTest
 public class AuthenticationServiceIT {
 
-    private static final String username = "root";
-    private static final String password = "secret";
+    @Value("${APP_ROOT_USERNAME}")
+    private String username;
+
+    @Value("${APP_ROOT_PASSWORD}")
+    private String password;
 
     @Autowired
     private AuthenticationService authenticationService;

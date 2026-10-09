@@ -1,13 +1,13 @@
 spring:
-   
   datasource:
     url: ${SPRING_DATASOURCE_URL}
-    driver-class-name: org.sqlite.JDBC
-    username: ${SPRING_USERNAME}
-    password: ${SPRING_PASSWORD}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
 
   jpa:
-    database-platform: org.hibernate.community.dialect.SQLiteDialect
-    hibernate.ddl-auto: update
+    hibernate:
+      ddl-auto: update
     show-sql: true
-    format-sql: true
+    properties:
+      hibernate:
+        format_sql: true

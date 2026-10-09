@@ -2,7 +2,7 @@ plugins {
 	java
 	id("org.springframework.boot") version "4.0.7"
 	id("io.spring.dependency-management") version "1.1.7"
-	jacoco	
+	jacoco
 }
 
 group = "com.jjtutti"
@@ -25,18 +25,20 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-webmvc")
 	compileOnly("org.projectlombok:lombok")
 	runtimeOnly("org.xerial:sqlite-jdbc")
-	
+
 	implementation("org.hibernate.orm:hibernate-community-dialects")
 
 	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:3.0.2")
 
 	annotationProcessor("org.projectlombok:lombok")
-	
+
 	runtimeOnly("com.h2database:h2")
-	
+
+	runtimeOnly("org.postgresql:postgresql")
+
 	implementation("io.jsonwebtoken:jjwt-api:0.13.0")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.13.0")
-    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.13.0")	
+    runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.13.0")
 
 	testImplementation("org.assertj:assertj-core:3.27.7")
 	testImplementation("org.mockito:mockito-core:5.+")
@@ -54,8 +56,8 @@ tasks.withType<Test> {
 }
 
 tasks.test {
-    finalizedBy(tasks.jacocoTestReport) 
+    finalizedBy(tasks.jacocoTestReport)
 }
 tasks.jacocoTestReport {
-    dependsOn(tasks.test) 
+    dependsOn(tasks.test)
 }

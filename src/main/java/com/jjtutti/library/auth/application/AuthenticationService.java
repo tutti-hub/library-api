@@ -71,7 +71,7 @@ public class AuthenticationService {
 
     private RefreshToken validateAndRevoke(String token) {
         // Проверить подпись и срок действия JWT
-        jwtService.validateToken(token);
+        jwtService.verifyAndParseClaims(token);
 
         // Вычислить hash
         // Найти RefreshToken в базе

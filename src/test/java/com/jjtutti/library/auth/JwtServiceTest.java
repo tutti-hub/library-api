@@ -2,14 +2,13 @@ package com.jjtutti.library.auth;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import com.jjtutti.library.auth.application.JwtService;
 import com.jjtutti.library.auth.infrastructure.JwtProperties;
 import com.jjtutti.library.security.dao.Role;
 import com.jjtutti.library.security.dao.User;
-
 import static com.jjtutti.library.security.dao.RoleName.*;
 import static org.assertj.core.api.Assertions.*;
+
 import java.time.Duration;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
@@ -34,7 +33,7 @@ public class JwtServiceTest {
         user.addRole(new Role(ROLE_ADMIN));
         String token = jwtService.generateToken(user);
 
-        jwtService.validateToken(token);
+        jwtService.verifyAndParseClaims(token);
       
         assertThat(jwtService.extractUsername(token)).isEqualTo(username);
     }
@@ -44,7 +43,7 @@ public class JwtServiceTest {
         String username = "admin";
         var result = jwtService.generateRefreshToken(username);
         String token = result.token();
-        jwtService.validateToken(token);
+        jwtService.verifyAndParseClaims(token);
         assertThat(jwtService.extractUsername(token)).isEqualTo(username);
         assertThat(result.createdAt()).isNotNull();
         assertThat(result.expiresAt()).isNotNull();
@@ -73,23 +72,6 @@ public class JwtServiceTest {
     }
 
     @Test
-    void shouldReturnFalseWhenUsernameDoesNotMatch() {
-        UserDetails user = userDetails("user", "ROLE_USER");
-        UserDetails other = userDetails("admin", "ROLE_ADMIN");
-
-        String token = jwtService.generateToken(user);
-
-        assertThat(jwtService.isTokenValid(token, other)).isFalse();
-    }
-
-    @Test
-    public void shouldReturnTrueForValidToken() {
-        UserDetails userDetails = userDetails("username", "ROLE_USER", "ROLE_ADMIN");
-        String token = jwtService.generateToken(userDetails);
-        assertThat(jwtService.isTokenValid(token, userDetails)).isTrue();
-    }
-
-    @Test
     public void shouldRejectExpiredToken() throws InterruptedException {
         JwtService jwtService = new JwtService(
                 new JwtProperties(
@@ -101,7 +83,7 @@ public class JwtServiceTest {
 
         Thread.sleep(15);
 
-        assertThatThrownBy(() -> jwtService.isTokenValid(token, userDetails))
+        assertThatThrownBy(() -> jwtService.verifyAndParseClaims(token))
                 .isInstanceOf(ExpiredJwtException.class);
     }
 

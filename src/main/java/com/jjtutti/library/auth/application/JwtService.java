@@ -5,16 +5,15 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.Date;
 import java.util.UUID;
-
 import javax.crypto.SecretKey;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
 import com.jjtutti.library.auth.application.dto.RefreshTokenGenerationResult;
 import com.jjtutti.library.auth.infrastructure.JwtProperties;
 import com.jjtutti.library.security.dao.User;
-
 import io.jsonwebtoken.JwtBuilder;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -71,20 +70,14 @@ public class JwtService {
     }
 
     public String extractUsername(String token) {
-        return Jwts.parser()
-                .verifyWith(getSigningKey())
-                .build()
-                .parseSignedClaims(token)
+        return
+                verifyAndParseClaims(token)
                 .getPayload()
                 .getSubject();
     }
 
-    public boolean isTokenValid(String token, UserDetails userDetails) {
-        return extractUsername(token).equals(userDetails.getUsername());
-    }
-
-    public void validateToken(String token) {
-        Jwts.parser()
+    public Jws<Claims> verifyAndParseClaims(String token) {
+        return Jwts.parser()
                 .verifyWith(getSigningKey())
                 .build()
                 .parseSignedClaims(token);
